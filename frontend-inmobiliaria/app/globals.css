@@ -1,0 +1,22 @@
+@import "tailwindcss";
+/* app/globals.css */
+
+/* ... tus otros estilos ... */
+
+@layer utilities {
+  /* Definimos la animación de desplazamiento infinito */
+  @keyframes scrolling-carousel {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      /* Calculamos el desplazamiento exacto: -(ancho_tarjeta + gap) * cantidad_tarjetas_originales */
+      /* Ejemplo con tarjetas de 320px, gap de 32px (gap-8) y 6 tarjetas originales */
+      transform: translateX(calc(-(320px + 32px) * 6)); 
+    }
+  }
+
+  .animate-scrolling-carousel {
+    animation: scrolling-carousel 30s linear infinite;
+  }
+}
