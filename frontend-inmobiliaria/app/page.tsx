@@ -22,7 +22,7 @@ export default function Home() {
   const [view, setView] = useState("home");
   const [showPromo, setShowPromo] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formStep, setFormStep] = useState(1); // RESTAURADO PARA EVITAR EL ERROR
+  const [formStep, setFormStep] = useState(1); 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '', apellidos: '', documento: '', telefono: '', email: '', proyecto: ''
@@ -31,31 +31,26 @@ export default function Home() {
   const [showLegalModal, setShowLegalModal] = useState(false);
   const [legalContent, setLegalContent] = useState({ title: "", text: "" });
 
-// --- LÓGICA DE PERSISTENCIA Y MONTAJE ---
-useEffect(() => {
-  const syncViewWithHash = () => {
-    const hash = window.location.hash;
-    // Si la URL termina en /#proyectos o similar
-    if (hash === "#proyectos") {
-      setView("projects");
-    } else if (hash === "#historia") {
-      setView("nosotros");
-    } else {
-      setView("home");
-    }
-    // Forzamos el scroll arriba siempre que cambie la vista
-    window.scrollTo(0, 0);
-  };
+  // --- LÓGICA DE PERSISTENCIA Y MONTAJE ---
+  useEffect(() => {
+    const syncViewWithHash = () => {
+      const hash = window.location.hash;
+      if (hash === "#proyectos") {
+        setView("projects");
+      } else if (hash === "#historia") {
+        setView("nosotros");
+      } else {
+        setView("home");
+      }
+      window.scrollTo(0, 0);
+    };
 
-  syncViewWithHash();
-  setIsMounted(true);
+    syncViewWithHash();
+    setIsMounted(true);
 
-  window.addEventListener("hashchange", syncViewWithHash);
-  return () => window.removeEventListener("hashchange", syncViewWithHash);
-}, []);
-
-// 🌟 AGREGAR ESTO: Si no ha montado, no renderices nada (evita el parpadeo blanco)
-if (!isMounted) return <div className="min-h-screen bg-white" />;
+    window.addEventListener("hashchange", syncViewWithHash);
+    return () => window.removeEventListener("hashchange", syncViewWithHash);
+  }, []);
 
   // --- LÓGICA DEL POPUP PROMOCIONAL ---
   useEffect(() => {
@@ -67,16 +62,20 @@ if (!isMounted) return <div className="min-h-screen bg-white" />;
     }
   }, [isMounted, view]);
 
-  // --- FUNCIÓN DE NAVEGACIÓN INTELIGENTE ---
-const handleViewChange = (newView: string) => {
-  const hashes: Record<string, string> = {
-    home: "#inicio",
-    projects: "#proyectos",
-    nosotros: "#historia"
-  };
+  // 🌟 CORRECCIÓN CRÍTICA: El return debe ir DESPUÉS de todos los useEffect 
+  // para que React siempre cuente el mismo número de Hooks.
+  if (!isMounted) return <div className="min-h-screen bg-white" />;
 
-  window.location.hash = hashes[newView];
-};
+  // --- FUNCIÓN DE NAVEGACIÓN INTELIGENTE ---
+  const handleViewChange = (newView: string) => {
+    const hashes: Record<string, string> = {
+      home: "#inicio",
+      projects: "#proyectos",
+      nosotros: "#historia"
+    };
+
+    window.location.hash = hashes[newView];
+  };
 
   const images = [
     "/IMG_CLIENTES/cliente5.jpeg", "/IMG_CLIENTES/cliente2.jpeg", "/IMG_CLIENTES/cliente3.jpeg",
