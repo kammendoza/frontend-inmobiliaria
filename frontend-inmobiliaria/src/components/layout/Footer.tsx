@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           <div className="flex justify-center lg:justify-start items-center">
-            <img src="/LOGOS/LOGO_BLANCO.png" alt="Logo" className="w-25 h-auto" />
+            <img src="/LOGOS/LOGO_BLANCO.png" alt="Logo" className="w-20 h-auto" />
           </div>
           <div>
             <h4 className="font-bold text-lg mb-6">Contacto</h4>

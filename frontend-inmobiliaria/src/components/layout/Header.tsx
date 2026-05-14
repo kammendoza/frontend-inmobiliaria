@@ -8,6 +8,7 @@ import {
   FaRegUserCircle,
 } from "react-icons/fa";
 import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 interface HeaderProps {
   onShowProjects: () => void;
@@ -20,10 +21,10 @@ export default function Header({
   onShowHome,
   currentView,
 }: HeaderProps) {
-  
   const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Solucionamos el error de Hydration (cuadro rojo)
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -31,35 +32,40 @@ export default function Header({
   const navigateTo = (path: string) => {
     if (typeof window === "undefined") return;
 
-    const currentPath = window.location.pathname;
-
-    // 🌟 SI NO ESTAMOS EN HOME (Ej: estás viendo un proyecto)
-    if (currentPath !== "/") {
-      // Forzamos carga limpia al home para evitar la pantalla blanca
-      window.location.href = path.startsWith("/") ? path : `/${path}`;
+    // Si estamos en una página de detalle (ej: /proyecto-sol-de-huaral)
+    if (pathname !== "/") {
+      // Usamos router.push para volver al home con el hash correspondiente
+      // Esto permite que page.tsx detecte el hash al cargar
+      router.push(path);
       return;
     }
 
-    // 🌟 SI YA ESTAMOS EN HOME
-    if (path.includes("proyectos")) {
+    // SI YA ESTAMOS EN HOME, manejamos los estados internos
+    if (path.includes("#proyectos")) {
       onShowProjects();
-    } else if (path.includes("nosotros")) {
+      window.location.hash = "proyectos";
+    } else if (path.includes("#nosotros")) {
       // Cambiamos el hash para que el useEffect de page.tsx lo detecte
       window.location.hash = "historia";
-    } else if (path.includes("formulario")) {
+    } else if (path.includes("#formulario")) {
       const section = document.getElementById("formulario");
-      section?.scrollIntoView({ behavior: "smooth" });
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.location.hash = "formulario";
+      }
     } else {
       // Si es "/" o "inicio"
       onShowHome();
+      window.location.hash = "inicio";
     }
   };
 
-  // Verificamos si el Inicio debe estar resaltado en amarillo
+  // Verificamos si el Inicio debe estar resaltado
   const isHomeActive =
     isClient &&
     currentView === "home" &&
-    window.location.pathname === "/";
+    pathname === "/";
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 font-montserrat">
@@ -143,7 +149,11 @@ export default function Header({
 
           <button
             onClick={() => navigateTo("/#nosotros")}
-            className="hover:text-yellow-400 transition-colors"
+            className={`transition-all ${
+              currentView === "nosotros"
+                ? "text-yellow-400 font-bold scale-105"
+                : "hover:text-yellow-400"
+            }`}
           >
             Nosotros
           </button>

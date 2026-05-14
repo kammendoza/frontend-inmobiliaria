@@ -35,9 +35,10 @@ export default function Home() {
   useEffect(() => {
     const syncViewWithHash = () => {
       const hash = window.location.hash;
+      // Sincroniza el estado view con el hash de la URL (botón atrás/adelante)
       if (hash === "#proyectos") {
         setView("projects");
-      } else if (hash === "#historia") {
+      } else if (hash === "#historia" || hash === "#nosotros") {
         setView("nosotros");
       } else {
         setView("home");
@@ -45,10 +46,12 @@ export default function Home() {
       window.scrollTo(0, 0);
     };
 
+    // Escuchar cambios de hash para navegación del navegador
+    window.addEventListener("hashchange", syncViewWithHash);
+    
     syncViewWithHash();
     setIsMounted(true);
 
-    window.addEventListener("hashchange", syncViewWithHash);
     return () => window.removeEventListener("hashchange", syncViewWithHash);
   }, []);
 
@@ -62,8 +65,8 @@ export default function Home() {
     }
   }, [isMounted, view]);
 
-  // 🌟 CORRECCIÓN CRÍTICA: El return debe ir DESPUÉS de todos los useEffect 
-  // para que React siempre cuente el mismo número de Hooks.
+  // 🌟 CORRECCIÓN: El return debe ir DESPUÉS de todos los useEffect 
+  // para cumplir con las reglas de Hooks de React y evitar la página en blanco.
   if (!isMounted) return <div className="min-h-screen bg-white" />;
 
   // --- FUNCIÓN DE NAVEGACIÓN INTELIGENTE ---
@@ -74,7 +77,7 @@ export default function Home() {
       nosotros: "#historia"
     };
 
-    window.location.hash = hashes[newView];
+    window.location.hash = hashes[newView] || "#inicio";
   };
 
   const images = [
@@ -164,7 +167,7 @@ export default function Home() {
               target="_blank" rel="noopener noreferrer" onClick={() => setShowPromo(false)} 
               className="block w-full rounded-2xl overflow-hidden shadow-2xl hover:scale-[1.02] transition-all duration-300 bg-transparent"
             >
-              <img src="/promo.jpg" alt="Promoción" className="w-full h-auto object-cover" onError={(e) => { e.currentTarget.src = "/IMG1.jpg" }} />
+              <img src="/IMG_PROMO/promo.jpg" alt="Promoción" className="w-full h-auto object-cover" onError={(e) => { e.currentTarget.src = "/IMG1.jpg" }} />
             </a>
           </div>
         </div>
